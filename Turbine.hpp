@@ -11,7 +11,7 @@ public:
     Turbine(int id, Status statusInitial,std::unique_ptr<InterfaceProductionStrategy> strategie,std::shared_ptr<Capteur> capteurDebit);
 
     int   getId() const;
-    float getDebit();
+    float getDebit()const;
     float getDebitMin() const;
     float getDebitMax() const;
     Status getStatus() const;
@@ -22,7 +22,7 @@ public:
     void setStatus(Status nouveauStatus);
 
     
-    float getProduction(float hauteur_de_chute_nette);
+    float getProduction(float hauteur_de_chute_nette) const;
 
     void mettreAJourDepuisCapteur();
 

@@ -20,7 +20,7 @@ public:
 
     void ajouterTurbine(std::unique_ptr<Turbine> turbine);
     int getNbTurbines() const;
-    Turbine* getTurbine(int index) const;
+    const Turbine* getTurbine(int index) const;
 
     float calculerHauteurChute() const;   
     float calculerProductionTotale() const;
@@ -28,6 +28,7 @@ public:
     void print_Production_centrale() const;
     void print_Production_centrale_detail() const;
 
+    void mettreAJour();
     
 
 private:

@@ -9,7 +9,7 @@ public:
     Reservoir(int id, std::shared_ptr<Capteur> capteurNiveau);
 
     int   getId() const;
-    float getNiveau();        
+    float getNiveau()const;        
     void  mettreAJour();
 
 private:

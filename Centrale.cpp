@@ -102,10 +102,19 @@ void Centrale::print_Production_centrale_detail() const
     std::cout << "===============================\n";
 }
 
-Turbine* Centrale::getTurbine(int index) const
+const Turbine* Centrale::getTurbine(int index) const
 {
     if (index < 0 || index >= getNbTurbines())
         return nullptr;
 
     return m_turbines[index].get();
+}
+
+void Centrale::mettreAJour(){
+    for (const auto& t : m_turbines)
+    {
+        if (!t) continue;
+        t->mettreAJourDepuisCapteur();
+    }
+    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
 }

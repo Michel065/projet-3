@@ -13,9 +13,8 @@ int Reservoir::getId() const
     return m_id;
 }
 
-float Reservoir::getNiveau()
+float Reservoir::getNiveau()const
 {
-    mettreAJour();
     return m_niveau;
 }
 

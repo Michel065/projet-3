@@ -49,6 +49,7 @@ void print_test_centrale_complete()
 
     std::cout << "===== TEST CENTRALE (1 seule valeur) =====\n";
 
+    centrale->mettreAJour();
     float H = centrale->calculerHauteurChute();
     float Psim = centrale->calculerProductionTotale();
 
@@ -62,7 +63,7 @@ void print_test_centrale_complete()
 
     for (int i = 0; i < centrale->getNbTurbines(); ++i)
     {
-        auto* t = centrale->getTurbine(i);
+        const auto* t = centrale->getTurbine(i);
         float q = t->getDebit();
         float pSim = t->getProduction(H);
         float pReal = ld.p[i];
@@ -82,8 +83,36 @@ void print_test_centrale_complete()
 }
 
 
+void execution_centrale_complete(int nbr_data=10){
+    auto src = std::make_shared<SourceDonnees>();
+    auto centrale = creation_centrale(src);
+
+    const auto& ld = src->ligneCourante();
+
+    std::cout << "===== EXECUTION CENTRALE DATA =====\n";
+    int x=0;
+    do{
+        x++;
+        std::cout << "\n===== Ligne "<<x<<" =====\n";
+        centrale->mettreAJour();
+        float H = centrale->calculerHauteurChute();
+        float Psim = centrale->calculerProductionTotale();
+
+        // Production reelle = somme P1..P5
+        float Preal = 0.f;
+        for (int i = 0; i < 5; ++i)
+            Preal += ld.p[i];
+
+        std::cout << "Elav     = " << ld.elav << "\n";
+        std::cout << "Hauteur  = " << H << "\n";
+        std::cout << "\nProduction totale simulee : " << Psim << "\n";
+        std::cout << "Production totale reelle   : " << Preal << "\n";
+        std::cout << "ERREUR = " << (Psim - Preal) << "\n";
+    }while(src->avancer() && x<nbr_data);
+}
+
 int main()
 {
-    print_test_centrale_complete();
+    execution_centrale_complete(2);
     return 0;
 }

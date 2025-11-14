@@ -102,6 +102,8 @@ void test_print_centrale()
         capteurQ1
     );
     centrale.ajouterTurbine(std::move(turbine1));
+    centrale.mettreAJour();
+    
     centrale.print_Production_centrale();
     centrale.print_Production_centrale_detail();
 

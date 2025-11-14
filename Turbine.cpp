@@ -18,9 +18,8 @@ int Turbine::getId() const
     return m_id;
 }
 
-float Turbine::getDebit()
+float Turbine::getDebit()const
 {
-    mettreAJourDepuisCapteur();
     return m_debit;
 }
 
@@ -41,8 +40,8 @@ Status Turbine::getStatus() const
 
 void Turbine::setDebit(float nouveauDebit)
 {
-    if (nouveauDebit < m_debit_min) {std::cout << "Turbine " << m_id << " : erreur, débit inférieur au débit_min !" << std::endl;return;}
-    if (nouveauDebit > m_debit_max) {std::cout << "Turbine " << m_id << " : erreur, débit supérieur au débit_max !" << std::endl;return;}
+    if (nouveauDebit < m_debit_min) {std::cout << "Turbine " << m_id << " : erreur, debit inférieur au debit_min !" << std::endl;return;}
+    if (nouveauDebit > m_debit_max) {std::cout << "Turbine " << m_id << " : erreur, debit supérieur au debit_max !" << std::endl;return;}
     /*uniquement si nv debit valide*/
     m_debit = nouveauDebit;
 }
@@ -63,16 +62,15 @@ void Turbine::setStatus(Status nouveauStatus)
 }
 
 
-float Turbine::getProduction(float hauteur_de_chute_nette)    
+float Turbine::getProduction(float hauteur_de_chute_nette)const
 {
     if (m_status != Status::Marche) return 0.f;//la turbine marche pas
 
     if (m_debit < m_debit_min || m_debit > m_debit_max) {
         /*on est pas dans les bornes donc erreur*/
-        std::cout<<"Turbine "<<m_id<<", erreur débit invalide !"<< std::endl;
+        std::cout<<"Turbine "<<m_id<<", erreur debit invalide !"<< std::endl;
         return 0.f;
     }
-    mettreAJourDepuisCapteur();
     if(m_debit==0.f){return 0.f;}
     return m_strategie->compute(hauteur_de_chute_nette, m_debit);
 }
