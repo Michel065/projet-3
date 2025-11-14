@@ -35,5 +35,5 @@ private:
     float  m_debit_min;
     float  m_debit_max;
     Status m_status;
-    std::unique_ptr<IProductionStrategy> m_strategie;
+    std::unique_ptr<InterfaceProductionStrategy> m_strategie;
 };

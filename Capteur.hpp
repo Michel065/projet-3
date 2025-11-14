@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 
+class SourceDonnees;
+
 enum class TypeMesure
 {
     Elav,
