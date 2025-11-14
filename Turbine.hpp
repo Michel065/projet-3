@@ -1,7 +1,10 @@
 #pragma once
 #include "InterfaceProductionStrategy.hpp"
+#include "Capteur.hpp"
 #include <iostream>
 #include <memory>
+
+
 
 enum class Status
 {
@@ -13,10 +16,10 @@ enum class Status
 class Turbine
 {
 public:
-    Turbine(int id, float debitInitial, Status statusInitial,std::unique_ptr<InterfaceProductionStrategy> strategie);
+    Turbine(int id, Status statusInitial,std::unique_ptr<InterfaceProductionStrategy> strategie,std::shared_ptr<Capteur> capteurDebit);
 
     int   getId() const;
-    float getDebit() const;
+    float getDebit();
     float getDebitMin() const;
     float getDebitMax() const;
     Status getStatus() const;
@@ -27,7 +30,9 @@ public:
     void setStatus(Status nouveauStatus);
 
     
-    float getProduction(float hauteur_de_chute_nette) const;
+    float getProduction(float hauteur_de_chute_nette);
+
+    void mettreAJourDepuisCapteur();
 
 private:
     int    m_id;
@@ -36,4 +41,5 @@ private:
     float  m_debit_max;
     Status m_status;
     std::unique_ptr<InterfaceProductionStrategy> m_strategie;
+    std::shared_ptr<Capteur> m_capteurDebit; 
 };

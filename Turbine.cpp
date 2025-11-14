@@ -1,13 +1,16 @@
 #include "Turbine.hpp"
 
-Turbine::Turbine(int id, float debitInitial, Status statusInitial,std::unique_ptr<InterfaceProductionStrategy> strategie)
+Turbine::Turbine(int id, Status statusInitial,std::unique_ptr<InterfaceProductionStrategy> strategie,std::shared_ptr<Capteur> capteurDebit)
     : m_id(id),
-      m_debit(debitInitial),
       m_status(statusInitial),
-      m_strategie(std::move(strategie))
+      m_strategie(std::move(strategie)),
+      m_capteurDebit(std::move(capteurDebit))
 {
     setDebitMin(0);
     setDebitMax(160);
+    if (m_capteurDebit) {
+        setDebit(m_capteurDebit->lire());
+    }
 }
 
 int Turbine::getId() const
@@ -15,8 +18,9 @@ int Turbine::getId() const
     return m_id;
 }
 
-float Turbine::getDebit() const
+float Turbine::getDebit()
 {
+    mettreAJourDepuisCapteur();
     return m_debit;
 }
 
@@ -59,7 +63,7 @@ void Turbine::setStatus(Status nouveauStatus)
 }
 
 
-float Turbine::getProduction(float hauteur_de_chute_nette) const    
+float Turbine::getProduction(float hauteur_de_chute_nette)    
 {
     if (m_status != Status::Marche) return 0.f;//la turbine marche pas
 
@@ -68,6 +72,13 @@ float Turbine::getProduction(float hauteur_de_chute_nette) const
         std::cout<<"Turbine "<<m_id<<", erreur débit invalide !"<< std::endl;
         return 0.f;
     }
-
+    mettreAJourDepuisCapteur();
     return m_strategie->compute(hauteur_de_chute_nette, m_debit);
+}
+
+void Turbine::mettreAJourDepuisCapteur()
+{
+    if (!m_capteurDebit) //on sait jamais on verifie
+        return;
+    setDebit(m_capteurDebit->lire());
 }
