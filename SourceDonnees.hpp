@@ -16,12 +16,13 @@ struct LigneDonnees
 class SourceDonnees
 {
 public:
-    // mieux : std::string, en minuscule, et const ref
     explicit SourceDonnees(const std::string& source = "DataProjet2025.csv");
 
     const LigneDonnees& ligneCourante() const;
-    bool avancer(); // passe à la ligne suivante, retourne false si fin
+    bool avancer(); // passe à la ligne suivante ou retourne false si fin
+    void print_ligneCourante() const;
 
+    int get_index_courrant()const;
 private:
     std::vector<LigneDonnees> m_lignes;
     std::size_t m_indexCourant = 0;

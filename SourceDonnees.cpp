@@ -63,7 +63,7 @@ SourceDonnees::SourceDonnees(const std::string& cheminFichier)
         std::size_t i = 0;
         convertirFloat(tokens[i++], ld.elav);      // Elav
         convertirFloat(tokens[i++], ld.qtot);      // Qtot
-        ++i;                                       // Qturb
+        convertirFloat(tokens[i++], ld.qturb);     // Qturb
         convertirFloat(tokens[i++], ld.qvan);      // Qvan
         convertirFloat(tokens[i++], ld.nivAmont);  // Niv Amont
 
@@ -95,4 +95,35 @@ bool SourceDonnees::avancer()
         return false;
     ++m_indexCourant;
     return true;
+}
+
+void SourceDonnees::print_ligneCourante() const
+{
+    if (m_lignes.empty()) {
+        std::cout << "Aucune ligne chargee dans SourceDonnees.\n";
+        return;
+    }
+
+    const LigneDonnees& ld = ligneCourante();
+
+    std::cout << "Ligne " << m_indexCourant << " :\n";
+    std::cout << "  Elav      = " << ld.elav      << "\n";
+    std::cout << "  Qtot      = " << ld.qtot      << "\n";
+    std::cout << "  Qturb     = " << ld.qturb     << "\n";
+    std::cout << "  Qvan      = " << ld.qvan      << "\n";
+    std::cout << "  NivAmont  = " << ld.nivAmont  << "\n";
+
+    std::cout << "  Q  : [";
+    for (int i = 0; i < 5; ++i) {
+        std::cout << ld.q[i] << (i < 4 ? ", " : "]\n");
+    }
+
+    std::cout << "  P  : [";
+    for (int i = 0; i < 5; ++i) {
+        std::cout << ld.p[i] << (i < 4 ? ", " : "]\n");
+    }
+}
+
+int SourceDonnees::get_index_courrant()const{
+    return m_indexCourant;
 }

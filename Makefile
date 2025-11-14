@@ -27,7 +27,9 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp | $(BUILD_DIR)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) main.exe main
+	rm -rf $(BUILD_DIR) main.exe
+
+c: clean
 
 run: main
 	./main
