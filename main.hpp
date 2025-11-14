@@ -6,3 +6,4 @@
 #include "Capteur.hpp"
 #include "Reservoir.hpp"
 #include "Centrale.hpp"
+#include "ParcHydroelectrique.hpp"

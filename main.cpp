@@ -82,6 +82,20 @@ void print_test_centrale_complete()
     std::cout << "=========================================\n";
 }
 
+void print_test_parc()
+{
+    auto src = std::make_shared<SourceDonnees>();
+
+    ParcHydroelectrique parc;
+
+    parc.ajouterCentrale(creation_centrale(src));
+
+    parc.mettreAJour();
+
+    parc.print_Production_parc();
+    std::cout<<std::endl;
+    parc.print_Production_parc_detail();
+}
 
 void execution_centrale_complete(int nbr_data=10){
     auto src = std::make_shared<SourceDonnees>();
@@ -113,6 +127,6 @@ void execution_centrale_complete(int nbr_data=10){
 
 int main()
 {
-    execution_centrale_complete(2);
+    print_test_parc();
     return 0;
 }
