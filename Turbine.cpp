@@ -73,6 +73,7 @@ float Turbine::getProduction(float hauteur_de_chute_nette)
         return 0.f;
     }
     mettreAJourDepuisCapteur();
+    if(m_debit==0.f){return 0.f;}
     return m_strategie->compute(hauteur_de_chute_nette, m_debit);
 }
 

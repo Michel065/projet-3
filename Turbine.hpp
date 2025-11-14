@@ -1,17 +1,9 @@
 #pragma once
 #include "InterfaceProductionStrategy.hpp"
 #include "Capteur.hpp"
+#include "Status.hpp"
 #include <iostream>
 #include <memory>
-
-
-
-enum class Status
-{
-    Arret,
-    Marche,
-    Maintenance
-};
 
 class Turbine
 {

@@ -1,8 +1,7 @@
-build/main.o: main.cpp main.hpp test.hpp SourceDonnees.hpp Capteur.hpp \
+build/test.o: test.cpp test.hpp SourceDonnees.hpp Capteur.hpp \
  StratsTurbines.hpp ProductionPolynomiale.hpp \
  InterfaceProductionStrategy.hpp Turbine.hpp Status.hpp Reservoir.hpp \
  Centrale.hpp
-main.hpp:
 test.hpp:
 SourceDonnees.hpp:
 Capteur.hpp:

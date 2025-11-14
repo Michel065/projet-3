@@ -1,7 +1,8 @@
 #pragma once
 
 #include <iostream>
-#include "SourceDonnees.hpp"
+#include "test.hpp"
+#include "StratsTurbines.hpp"
 #include "Capteur.hpp"
-#include "ProductionPolynomiale.hpp"
-#include "Turbine.hpp"
+#include "Reservoir.hpp"
+#include "Centrale.hpp"
