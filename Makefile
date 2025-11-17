@@ -22,7 +22,8 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(BUILD_DIR) main.exe
+	if exist $(BUILD_DIR) rmdir /S /Q $(BUILD_DIR)
+	if exist main.exe del /Q main.exe
 
 c: clean
 

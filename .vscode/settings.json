@@ -55,7 +55,7 @@
         "text_encoding": "cpp",
         "typeinfo": "cpp",
         "variant": "cpp",
-        "*.gitignore": "cpp",
+        ".gitignore": "gitignore",
         "cstring": "cpp",
         "ios": "cpp",
         "list": "cpp",
