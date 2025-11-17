@@ -1,4 +1,4 @@
-#include "ProductionPolynomiale.hpp"
+#include "strategie/ProductionPolynomiale.hpp"
 
 ProductionPolynomiale::ProductionPolynomiale(float p00, float p10, float p01,
                                              float p11, float p20, float p02,

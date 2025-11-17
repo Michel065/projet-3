@@ -16,7 +16,7 @@ struct LigneDonnees
 class SourceDonnees
 {
 public:
-    explicit SourceDonnees(const std::string& source = "DataProjet2025.csv");
+    explicit SourceDonnees(const std::string& source = "data/DataProjet2025.csv");
 
     const LigneDonnees& ligneCourante() const;
     bool avancer(); // passe à la ligne suivante ou retourne false si fin

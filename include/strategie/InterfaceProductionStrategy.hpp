@@ -1,9 +1,4 @@
 #pragma once
-
-/*
-pour utiliser un pattern
-*/
-
 class InterfaceProductionStrategy
 {
 public:

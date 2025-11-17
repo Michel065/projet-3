@@ -1,49 +1,11 @@
-#include "main.hpp"
+#include <iostream>
+#include "factory/CentraleFactory.hpp"
+#include "ParcHydroelectrique.hpp"
 
-std::unique_ptr<Centrale> creation_centrale(std::shared_ptr<SourceDonnees> src)
-{
-    auto capteurNivAmont = std::make_shared<Capteur>(src, TypeMesure::NivAmont);
-
-    auto resAmont = std::make_shared<Reservoir>(1, capteurNivAmont);
-
-    auto centrale = std::make_unique<Centrale>(
-        1,
-        Status::Marche,
-        resAmont
-    );
-
-    //turbine 1:
-    auto capteurQ1 = std::make_shared<Capteur>(src, TypeMesure::Q1);
-    centrale->ajouterTurbine(std::make_unique<Turbine>(
-        1, Status::Marche, StratTurbine::make_turbine1(), capteurQ1));
-
-    //turbine 2:
-    auto capteurQ2 = std::make_shared<Capteur>(src, TypeMesure::Q2);
-    centrale->ajouterTurbine(std::make_unique<Turbine>(
-        2, Status::Marche, StratTurbine::make_turbine2(), capteurQ2));
-
-    //turbine 3:
-    auto capteurQ3 = std::make_shared<Capteur>(src, TypeMesure::Q3);
-    centrale->ajouterTurbine(std::make_unique<Turbine>(
-        3, Status::Marche, StratTurbine::make_turbine3(), capteurQ3));
-
-    //turbine 4:
-    auto capteurQ4 = std::make_shared<Capteur>(src, TypeMesure::Q4);
-    centrale->ajouterTurbine(std::make_unique<Turbine>(
-        4, Status::Marche, StratTurbine::make_turbine4(), capteurQ4));
-
-    //turbine 5:
-    auto capteurQ5 = std::make_shared<Capteur>(src, TypeMesure::Q5);
-    centrale->ajouterTurbine(std::make_unique<Turbine>(
-        5, Status::Marche, StratTurbine::make_turbine5(), capteurQ5));
-
-    return centrale;
-}
-
-void print_test_centrale_complete()
+void print_test_centrale_complete_1_valeur()
 {
     auto src = std::make_shared<SourceDonnees>();
-    auto centrale = creation_centrale(src);
+    auto centrale = CentraleFactory::creerCentraleStandard(src);
 
     const auto& ld = src->ligneCourante();
 
@@ -51,7 +13,7 @@ void print_test_centrale_complete()
 
     centrale->mettreAJour();
     float H = centrale->calculerHauteurChute();
-    float Psim = centrale->calculerProductionTotale();
+    float Psim = centrale->getProductionInstantanee();
 
     // Production reelle = somme P1..P5
     float Preal = 0.f;
@@ -63,9 +25,10 @@ void print_test_centrale_complete()
 
     for (int i = 0; i < centrale->getNbTurbines(); ++i)
     {
-        const auto* t = centrale->getTurbine(i);
+        auto* t = centrale->getTurbine(i);
         float q = t->getDebit();
-        float pSim = t->getProduction(H);
+        t->setHauteurChute(H);
+        float pSim = t->getProductionInstantanee();
         float pReal = ld.p[i];
 
         std::cout << "Turbine " << (i+1)
@@ -88,7 +51,7 @@ void print_test_parc()
 
     ParcHydroelectrique parc;
 
-    parc.ajouterCentrale(creation_centrale(src));
+    parc.ajouterCentrale(CentraleFactory::creerCentraleStandard(src));
 
     parc.mettreAJour();
 
@@ -99,7 +62,7 @@ void print_test_parc()
 
 void execution_centrale_complete(int nbr_data=10){
     auto src = std::make_shared<SourceDonnees>();
-    auto centrale = creation_centrale(src);
+    auto centrale = CentraleFactory::creerCentraleStandard(src);
 
     const auto& ld = src->ligneCourante();
 
@@ -110,7 +73,7 @@ void execution_centrale_complete(int nbr_data=10){
         std::cout << "\n===== Ligne "<<x<<" =====\n";
         centrale->mettreAJour();
         float H = centrale->calculerHauteurChute();
-        float Psim = centrale->calculerProductionTotale();
+        float Psim = centrale->getProductionInstantanee();
 
         // Production reelle = somme P1..P5
         float Preal = 0.f;
@@ -127,6 +90,6 @@ void execution_centrale_complete(int nbr_data=10){
 
 int main()
 {
-    print_test_parc();
+    execution_centrale_complete();
     return 0;
 }

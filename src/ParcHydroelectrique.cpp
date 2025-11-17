@@ -26,13 +26,13 @@ void ParcHydroelectrique::mettreAJour()
     }
 }
 
-float ParcHydroelectrique::productionTotale() const
+float ParcHydroelectrique::getProductionInstantanee() const
 {
     float somme = 0.f;
 
     for (const auto& c : m_centrales) {
         if (!c) continue;
-        float Ptot = c->calculerProductionTotale();
+        float Ptot = c->getProductionInstantanee();
         somme += Ptot;
     }
 
@@ -47,13 +47,13 @@ void ParcHydroelectrique::print_Production_parc() const
         if (!c) continue;
 
         float H    = c->calculerHauteurChute();
-        float Ptot = c->calculerProductionTotale();
+        float Ptot = c->getProductionInstantanee();
 
         std::cout << "Centrale " << c->getId()
                   << " : H = " << H
                   << " | Prod = " << Ptot << " MW\n";
     }
-    std::cout << "Production totale parc : " << productionTotale() << " MW\n";
+    std::cout << "Production totale parc : " << getProductionInstantanee() << " MW\n";
     std::cout << "===========================\n";
 }
 
@@ -64,6 +64,6 @@ void ParcHydroelectrique::print_Production_parc_detail() const
         if (!c) continue;
         c->print_Production_centrale_detail();
     }
-    std::cout << "Production totale parc : " << productionTotale() << " MW\n";
+    std::cout << "Production totale parc : " << getProductionInstantanee() << " MW\n";
     std::cout << "=======================\n";
 }

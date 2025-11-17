@@ -1,2 +1,4 @@
-./DataProjet2025.xlsx
-./main.exe
+/build/
+*.exe
+.vscode/
+*.code-workspace

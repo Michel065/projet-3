@@ -49,7 +49,7 @@ float Centrale::calculerHauteurChute() const
 }
 
 
-float Centrale::calculerProductionTotale() const
+float Centrale::getProductionInstantanee() const
 {
     if (m_status != Status::Marche) {
         return 0.f;
@@ -59,9 +59,9 @@ float Centrale::calculerProductionTotale() const
     float somme = 0.f;
 
     for (const auto& t : m_turbines) {
-        if (t) {
-            somme += t->getProduction(hauteurChute);
-        }
+        if (!t) continue;
+        t->setHauteurChute(hauteurChute);
+        somme += t->getProductionInstantanee();
     }
 
     return somme;
@@ -70,7 +70,7 @@ float Centrale::calculerProductionTotale() const
 void Centrale::print_Production_centrale() const
 {
     float H = calculerHauteurChute();
-    float productionTotale = calculerProductionTotale();
+    float productionTotale = getProductionInstantanee();
 
     std::cout << "===== PRODUCTION CENTRALE " << m_id << " =====\n";
     std::cout << "Hauteur de chute : " << H << "\n";
@@ -81,7 +81,7 @@ void Centrale::print_Production_centrale() const
 void Centrale::print_Production_centrale_detail() const
 {
     float H = calculerHauteurChute();
-    float productionTotale = calculerProductionTotale();
+    float productionTotale = getProductionInstantanee();
 
     std::cout << "===== DETAIL PRODUCTION CENTRALE " << m_id << " =====\n";
     std::cout << "Hauteur de chute calculee : " << H << "\n";
@@ -91,8 +91,8 @@ void Centrale::print_Production_centrale_detail() const
     for (const auto& t : m_turbines)
     {
         if (!t) continue;
-
-        float prod = t->getProduction(H);
+        t->setHauteurChute(H);
+        float prod = t->getProductionInstantanee();
 
         std::cout << " - Turbine " << t->getId()
                   << " | debit = " << t->getDebit()
@@ -103,6 +103,14 @@ void Centrale::print_Production_centrale_detail() const
 }
 
 const Turbine* Centrale::getTurbine(int index) const
+{
+    if (index < 0 || index >= getNbTurbines())
+        return nullptr;
+
+    return m_turbines[index].get();
+}
+
+Turbine* Centrale::getTurbine(int index)// uniquement utilise dans le cas ou on veux simuler depuis l'exterieur
 {
     if (index < 0 || index >= getNbTurbines())
         return nullptr;

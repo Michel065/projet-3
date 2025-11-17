@@ -1,11 +1,12 @@
 #pragma once
-#include "InterfaceProductionStrategy.hpp"
+#include "strategie/InterfaceProductionStrategy.hpp"
+#include "composite/Iproduction.hpp"
 #include "Capteur.hpp"
 #include "Status.hpp"
 #include <iostream>
 #include <memory>
 
-class Turbine
+class Turbine : public IProducteur
 {
 public:
     Turbine(int id, Status statusInitial,std::unique_ptr<InterfaceProductionStrategy> strategie,std::shared_ptr<Capteur> capteurDebit);
@@ -21,8 +22,8 @@ public:
     void setDebitMax(float nouveauDebit);
     void setStatus(Status nouveauStatus);
 
-    
-    float getProduction(float hauteur_de_chute_nette) const;
+    void setHauteurChute(float h);
+    float getProductionInstantanee() const override;
 
     void mettreAJourDepuisCapteur();
 
@@ -31,6 +32,7 @@ private:
     float  m_debit;
     float  m_debit_min;
     float  m_debit_max;
+    float m_hauteurChute = 0.f; 
     Status m_status;
     std::unique_ptr<InterfaceProductionStrategy> m_strategie;
     std::shared_ptr<Capteur> m_capteurDebit; 

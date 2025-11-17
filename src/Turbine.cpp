@@ -61,8 +61,7 @@ void Turbine::setStatus(Status nouveauStatus)
     m_status = nouveauStatus;
 }
 
-
-float Turbine::getProduction(float hauteur_de_chute_nette)const
+float Turbine::getProductionInstantanee() const
 {
     if (m_status != Status::Marche) return 0.f;//la turbine marche pas
 
@@ -72,7 +71,12 @@ float Turbine::getProduction(float hauteur_de_chute_nette)const
         return 0.f;
     }
     if(m_debit==0.f){return 0.f;}
-    return m_strategie->compute(hauteur_de_chute_nette, m_debit);
+    return m_strategie->compute(m_hauteurChute, m_debit);
+}
+
+void Turbine::setHauteurChute(float h)
+{
+    m_hauteurChute = h;
 }
 
 void Turbine::mettreAJourDepuisCapteur()
