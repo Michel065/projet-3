@@ -40,10 +40,18 @@ Status Turbine::getStatus() const
 
 void Turbine::setDebit(float nouveauDebit)
 {
-    if (nouveauDebit < m_debit_min) {std::cout << "Turbine " << m_id << " : erreur, debit inférieur au debit_min !" << std::endl;return;}
-    if (nouveauDebit > m_debit_max) {std::cout << "Turbine " << m_id << " : erreur, debit supérieur au debit_max !" << std::endl;return;}
+    if (nouveauDebit < m_debit_min) {std::cout << "Turbine " << m_id << " : erreur, debit inferieur au debit_min !" << std::endl;return;}
+    if (nouveauDebit > m_debit_max) {std::cout << "Turbine " << m_id << " : erreur, debit superieur au debit_max !" << std::endl;return;}
     /*uniquement si nv debit valide*/
     m_debit = nouveauDebit;
+    if (m_status != Status::Maintenance)
+    {
+        if (m_debit == 0.f)
+            m_status = Status::Arret;
+        else if(m_status == Status::Arret){
+            m_status = Status::Marche;
+        }
+    }
 }
 
 void Turbine::setDebitMin(float nouveauDebit)

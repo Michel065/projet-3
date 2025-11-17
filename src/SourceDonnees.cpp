@@ -58,15 +58,19 @@ SourceDonnees::SourceDonnees(const std::string& cheminFichier)
         if (tokens.size() < 15)
             continue;
 
-        LigneDonnees ld{};
+        float qvanTmp = 0.f;
+        convertirFloat(tokens[3], qvanTmp);
+        if (qvanTmp > 0.f){// on la prend pas
+            continue;
+        }
 
+        LigneDonnees ld{};
         std::size_t i = 0;
         convertirFloat(tokens[i++], ld.elav);      // Elav
         convertirFloat(tokens[i++], ld.qtot);      // Qtot
         convertirFloat(tokens[i++], ld.qturb);     // Qturb
-        convertirFloat(tokens[i++], ld.qvan);      // Qvan
+        ld.qvan=0.;i++;
         convertirFloat(tokens[i++], ld.nivAmont);  // Niv Amont
-
         convertirFloat(tokens[i++], ld.q[0]);      // Q1
         convertirFloat(tokens[i++], ld.p[0]);      // P1
         convertirFloat(tokens[i++], ld.q[1]);      // Q2
