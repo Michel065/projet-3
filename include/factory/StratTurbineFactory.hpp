@@ -5,9 +5,9 @@
 class StratTurbineFactory
 {
 public:
-    static std::unique_ptr<ProductionPolynomiale> makeStratTurbine1();
-    static std::unique_ptr<ProductionPolynomiale> makeStratTurbine2();
-    static std::unique_ptr<ProductionPolynomiale> makeStratTurbine3();
-    static std::unique_ptr<ProductionPolynomiale> makeStratTurbine4();
-    static std::unique_ptr<ProductionPolynomiale> makeStratTurbine5();
+    static std::unique_ptr<InterfaceProductionStrategy> makeStratTurbine1();
+    static std::unique_ptr<InterfaceProductionStrategy> makeStratTurbine2();
+    static std::unique_ptr<InterfaceProductionStrategy> makeStratTurbine3();
+    static std::unique_ptr<InterfaceProductionStrategy> makeStratTurbine4();
+    static std::unique_ptr<InterfaceProductionStrategy> makeStratTurbine5();
 };

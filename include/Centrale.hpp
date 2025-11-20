@@ -26,6 +26,7 @@ public:
 
     float calculerHauteurChute() const;   
     float getProductionInstantanee() const override;
+    std::vector<std::pair<int, float>> getProductionInstantaneeDetail() const;
 
     void print_Production_centrale() const;
     void print_Production_centrale_detail() const;

@@ -1,6 +1,6 @@
 #include "factory/StratTurbineFactory.hpp"
 
-std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine1()
+std::unique_ptr<InterfaceProductionStrategy> StratTurbineFactory::makeStratTurbine1()
 {
     return std::make_unique<ProductionPolynomiale>(
         1.102f,        // p00
@@ -15,7 +15,7 @@ std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine1()
     );
 }
 
-std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine2()
+std::unique_ptr<InterfaceProductionStrategy> StratTurbineFactory::makeStratTurbine2()
 {
     return std::make_unique<ProductionPolynomiale>(
         -1.382f,        // p00
@@ -30,7 +30,7 @@ std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine2()
     );
 }
 
-std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine3()
+std::unique_ptr<InterfaceProductionStrategy> StratTurbineFactory::makeStratTurbine3()
 {
     return std::make_unique<ProductionPolynomiale>(
         0.7799f,       // p00
@@ -45,7 +45,7 @@ std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine3()
     );
 }
 
-std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine4()
+std::unique_ptr<InterfaceProductionStrategy> StratTurbineFactory::makeStratTurbine4()
 {
     return std::make_unique<ProductionPolynomiale>(
         20.22f,         // p00
@@ -60,7 +60,7 @@ std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine4()
     );
 }
 
-std::unique_ptr<ProductionPolynomiale> StratTurbineFactory::makeStratTurbine5()
+std::unique_ptr<InterfaceProductionStrategy> StratTurbineFactory::makeStratTurbine5()
 {
     return std::make_unique<ProductionPolynomiale>(
         -212.1f,        // p00

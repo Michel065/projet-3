@@ -54,17 +54,39 @@ float Centrale::getProductionInstantanee() const
     if (m_status != Status::Marche) {
         return 0.f;
     }
-
-    float hauteurChute = calculerHauteurChute();
+    auto details = getProductionInstantaneeDetail();
     float somme = 0.f;
-
-    for (const auto& t : m_turbines) {
-        if (!t) continue;
-        t->setHauteurChute(hauteurChute);
-        somme += t->getProductionInstantanee();
+    for (const auto& [id, prod] : details) {
+        somme += prod;
     }
 
     return somme;
+}
+
+
+std::vector<std::pair<int, float>> Centrale::getProductionInstantaneeDetail() const
+{
+    std::vector<std::pair<int, float>> details;
+
+    if (m_status != Status::Marche) {
+        for (const auto& t : m_turbines) {
+            if (!t) continue;
+            details.emplace_back(t->getId(), 0.f);
+        }
+        return details;
+    }
+
+    float hauteurChute = calculerHauteurChute();
+
+    for (const auto& t : m_turbines) {
+        if (!t) continue;
+
+        t->setHauteurChute(hauteurChute);
+        float p = t->getProductionInstantanee();
+        details.emplace_back(t->getId(), p);
+    }
+
+    return details;
 }
 
 void Centrale::print_Production_centrale() const
