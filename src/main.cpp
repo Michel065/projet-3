@@ -240,6 +240,6 @@ void execution_centrale_detail(int nbr_data = 10)
 
 int main()
 {
-    execution_centrale_detail(200);
+    execution_centrale_detail(-1);
     return 0;
 }
