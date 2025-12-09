@@ -1,6 +1,7 @@
 #include "RepartitionDebit.hpp"
 #include <algorithm>
 #include <numeric>
+#include <cmath> // pour std::fabs
 
 namespace {
     float clamp(float v, float vmin, float vmax) {
@@ -29,6 +30,7 @@ ResultatRepartition ModuleRepartitionDebit::calculer(const std::vector<EtatTurbi
     std::vector<float> minAut(n, 0.f);
     std::vector<float> maxAut(n, 0.f);
 
+    // 1) Construire les intervalles autorises [minAut, maxAut]
     for (std::size_t i = 0; i < n; ++i) {
         const auto& e   = etats[i];
         auto        it  = commandes.find(e.id);
@@ -41,9 +43,7 @@ ResultatRepartition ModuleRepartitionDebit::calculer(const std::vector<EtatTurbi
             statusForce    = true;
         }
 
-        // 1) Cas bloqués
-        // - si le statut est force et != Marche -> turbine interdite
-        // - si le statut n'est pas force mais capteur indique Maintenance -> interdite
+        // Cas bloques :
         if ((statusForce && statusEffectif != Status::Marche) ||
             (!statusForce && statusEffectif == Status::Maintenance))
         {
@@ -52,12 +52,10 @@ ResultatRepartition ModuleRepartitionDebit::calculer(const std::vector<EtatTurbi
             continue;
         }
 
-        // 2) Ici :
-        // - Marche
-        // - ou Arret non force (la centrale peut la redemarrer)
         float dmin = e.debitMin;
         float dmax = e.debitMax;
 
+        // Debit impose
         if (it != commandes.end() && it->second.forceDebit) {
             float d = clamp(it->second.debitImpose, dmin, dmax);
             dmin = d;
@@ -77,30 +75,75 @@ ResultatRepartition ModuleRepartitionDebit::calculer(const std::vector<EtatTurbi
         return res;
     }
 
-    float debitTurbinesCible = std::min(debitTotal, sommeMax);
-
-
+    // 2) Base = debits actuels clampés dans [minAut, maxAut]
+    std::vector<float> base(n, 0.f);
     for (std::size_t i = 0; i < n; ++i) {
         if (maxAut[i] <= 0.f) {
-            res.debitsTurbines[i] = 0.f;
+            base[i] = 0.f;
             continue;
         }
-        float proportion = maxAut[i] / sommeMax;
-        float di = debitTurbinesCible * proportion;
-        di = clamp(di, minAut[i], maxAut[i]);
-        res.debitsTurbines[i] = di;
+        const auto& e = etats[i];
+        float d = e.debitActuel;          // valeur mesuree actuelle
+        d = clamp(d, minAut[i], maxAut[i]);
+        base[i] = d;
     }
 
-    float sommeReelle = std::accumulate(res.debitsTurbines.begin(), res.debitsTurbines.end(), 0.f);
-    res.debitVanne = std::max(0.f, debitTotal - sommeReelle);
+    float sommeBase = std::accumulate(base.begin(), base.end(), 0.f);
 
-    if (debitTotal > sommeMax) {
-        res.repartitionPossible = false;
-        res.message =
-            "Debit total demande superieur au maximum des turbines. "
-            "Turbines saturees, vanne evacuant "
-            + std::to_string(res.debitVanne);
+    // 3) Si la somme colle deja au debitTotal, on ne touche a rien
+    const float EPS = 1e-3f;
+    if (std::fabs(sommeBase - debitTotal) <= EPS) {
+        res.debitsTurbines = base;
+        res.debitVanne = std::max(0.f, debitTotal - sommeBase);
+        return res;
     }
+
+    // 4) Sinon, on ajuste uniquement ce qui est necessaire
+    res.debitsTurbines = base;
+    float delta = debitTotal - sommeBase;
+
+    if (delta > 0.f) {
+        // Il faut augmenter la somme -> marge vers le haut
+        std::vector<float> margeUp(n, 0.f);
+        for (std::size_t i = 0; i < n; ++i) {
+            margeUp[i] = std::max(0.f, maxAut[i] - base[i]);
+        }
+        float sommeMargeUp = std::accumulate(margeUp.begin(), margeUp.end(), 0.f);
+
+        if (sommeMargeUp <= 0.f) {
+            res.repartitionPossible = false;
+            res.message = "Debit total demande superieur au maximum des turbines. Turbines saturees.";
+        } else {
+            float incr = std::min(delta, sommeMargeUp);
+            for (std::size_t i = 0; i < n; ++i) {
+                if (margeUp[i] <= 0.f) continue;
+                float add = incr * (margeUp[i] / sommeMargeUp);
+                res.debitsTurbines[i] = base[i] + add;
+            }
+        }
+    } else if (delta < 0.f) {
+        // Il faut diminuer la somme -> marge vers le bas
+        std::vector<float> margeDown(n, 0.f);
+        for (std::size_t i = 0; i < n; ++i) {
+            margeDown[i] = std::max(0.f, base[i] - minAut[i]);
+        }
+        float sommeMargeDown = std::accumulate(margeDown.begin(), margeDown.end(), 0.f);
+
+        if (sommeMargeDown <= 0.f) {
+            res.repartitionPossible = false;
+            res.message = "Impossible de reduire le debit des turbines sans violer les debits_min.";
+        } else {
+            float dec = std::min(-delta, sommeMargeDown);
+            for (std::size_t i = 0; i < n; ++i) {
+                if (margeDown[i] <= 0.f) continue;
+                float sub = dec * (margeDown[i] / sommeMargeDown);
+                res.debitsTurbines[i] = base[i] - sub;
+            }
+        }
+    }
+
+    float sommeFinale = std::accumulate(res.debitsTurbines.begin(), res.debitsTurbines.end(), 0.f);
+    res.debitVanne = std::max(0.f, debitTotal - sommeFinale);
 
     return res;
 }

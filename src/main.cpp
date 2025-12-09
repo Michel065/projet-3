@@ -192,15 +192,15 @@ void execution_centrale_detail(int nbr_data = 10)
         CommandeTurbine cmd;
         cmd.forceStatus  = true;
         cmd.statusImpose = Status::Arret;
-        centrale->setCommandeTurbine(3, cmd);
+        centrale->setCommandeTurbine(1, cmd);
     }
-
+    /*
     {
         centrale->setDebitMinTurbine(2, 30.f);
         centrale->setDebitMaxTurbine(2, 120.f);
     }
     // Exemple 2 : turbine 2 limitée à un débit imposé (par ex. 40 m3/s)
-    /*{
+    {
         CommandeTurbine cmd;
         cmd.forceDebit   = true;
         cmd.debitImpose  = 140.f;
@@ -263,6 +263,6 @@ void execution_centrale_detail(int nbr_data = 10)
 
 int main()
 {
-    execution_centrale_detail(200);
+    execution_centrale_detail(50);
     return 0;
 }
