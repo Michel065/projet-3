@@ -1,4 +1,5 @@
-/build/
-*.exe
-/data/historique_centrale.csv
-/data/historique_turbines.csv
+﻿################################################################################
+# Ce fichier .gitignore a été automatiquement créé par Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/HydroQuebec

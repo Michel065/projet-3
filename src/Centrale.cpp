@@ -15,6 +15,12 @@ Centrale::Centrale(int id,
     // Créer le chart
     m_chart->addSeries(m_series);
     m_chart->setTitle("Repartition de la puissance produite par turbine");
+    QFont titleFont;
+    titleFont.setFamily("Arial");     // ou ce que tu veux
+    titleFont.setPointSize(14);       // taille du titre
+    titleFont.setBold(true);          // en gras
+
+    m_chart->setTitleFont(titleFont);
     m_chart->legend()->setVisible(true);
     m_chart->legend()->setAlignment(Qt::AlignRight);
 
@@ -160,14 +166,16 @@ Turbine* Centrale::getTurbine(int index)// uniquement utilise dans le cas ou on 
 }
 
 void Centrale::mettreAJour(){
-    date.addSecs(7200);
+    date = date.addSecs(7200);
     this->getProductionInstantanee();
     for (const auto& t : m_turbines)
     {
-        if (!t) continue;
-        t->mettreAJourDepuisCapteur();
-		t->addDataToHistorique({ t->getId(), t->getDebit(), t->getDebitMin(), t->getDebitMax(), t->getHauteurChute(), t->getProductionInstantanee()});
+        if (!t || t->getMode() == ModeTurbine::Automatique) {
+            t->mettreAJourDepuisCapteur();
+        }
+        t->addDataToHistorique({ t->getId(), t->getDebit(), t->getDebitMin(), t->getDebitMax(), t->getHauteurChute(), t->getProductionInstantanee() });
     }
+    
     if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
 }
 
@@ -220,7 +228,7 @@ void Centrale::draw(QPainter& p, int height, int width)
     p.setPen(Qt::black);
 
     QRect dateRect(0, 0, width - 10, 50); // marge de 10 px
-    p.drawText(dateRect, Qt::AlignRight | Qt::AlignVCenter, date.toString("dd MMMM yyyy \n hh::mm"));
+    p.drawText(dateRect, Qt::AlignRight | Qt::AlignVCenter, date.toString("dd MMMM yyyy \n hh:mm"));
 }
 
 void Centrale::drawRepartitionPuissance(QPainter& p)

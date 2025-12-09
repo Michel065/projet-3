@@ -22,6 +22,6 @@ protected:
 private:
     Turbine* m_turbine;
     ToggleSwitch* m_switch;
-    QLineEdit* m_editValeur;
+    QLineEdit* m_editValeur, *EditQMin, *EditQMax;
     QComboBox* m_comboStatus;
 };
