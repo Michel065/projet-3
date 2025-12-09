@@ -79,10 +79,6 @@ ResultatRepartition ModuleRepartitionDebit::calculer(const std::vector<EtatTurbi
 
     float debitTurbinesCible = std::min(debitTotal, sommeMax);
 
-    if (debitTotal > sommeMax) {
-        res.repartitionPossible = false;
-        res.message = "Debit total demande superieur au maximum des turbines. Turbines saturees.";
-    }
 
     for (std::size_t i = 0; i < n; ++i) {
         if (maxAut[i] <= 0.f) {
@@ -97,6 +93,14 @@ ResultatRepartition ModuleRepartitionDebit::calculer(const std::vector<EtatTurbi
 
     float sommeReelle = std::accumulate(res.debitsTurbines.begin(), res.debitsTurbines.end(), 0.f);
     res.debitVanne = std::max(0.f, debitTotal - sommeReelle);
+
+    if (debitTotal > sommeMax) {
+        res.repartitionPossible = false;
+        res.message =
+            "Debit total demande superieur au maximum des turbines. "
+            "Turbines saturees, vanne evacuant "
+            + std::to_string(res.debitVanne);
+    }
 
     return res;
 }

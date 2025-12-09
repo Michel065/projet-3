@@ -199,10 +199,9 @@ void execution_centrale_detail(int nbr_data = 10)
     /*{
         CommandeTurbine cmd;
         cmd.forceDebit   = true;
-        cmd.debitImpose  = 40.f;   // à adapter à tes données
-        // si tu veux aussi forcer le status en marche :
-        // cmd.forceStatus  = true;
-        // cmd.statusImpose = Status::Marche;
+        cmd.debitImpose  = 140.f;
+        cmd.forceStatus  = true;
+        cmd.statusImpose = Status::Marche;
         centrale->setCommandeTurbine(2, cmd);
     }*/
 

@@ -18,6 +18,7 @@ public:
     Centrale(int id,
              Status statusInitial,
              std::shared_ptr<Reservoir> reservoirAmont,
+             std::shared_ptr<Capteur> capteurQturb,
              std::unique_ptr<ModuleRepartitionDebit> moduleRepartition);
 
     int    getId()     const;
@@ -39,6 +40,7 @@ public:
     void mettreAJour();
     
     //test repartition
+    const CommandeTurbine& getCommandeTurbine(int idTurbine);
     void setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd);
     ResultatRepartition repartirDebit(float debitTotal);
     
@@ -48,6 +50,7 @@ private:
     Status m_status;
 
     std::shared_ptr<Reservoir> m_reservoirAmont;
+    std::shared_ptr<Capteur> m_capteurQturb;
 
     std::vector<std::unique_ptr<Turbine>> m_turbines;
 

@@ -24,6 +24,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
 clean:
 	if exist $(BUILD_DIR) rmdir /S /Q $(BUILD_DIR)
 	if exist main.exe del /Q main.exe
+	cls
 
 c: clean
 

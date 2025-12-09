@@ -29,7 +29,5 @@ struct ResultatRepartition {
 
 class ModuleRepartitionDebit {
 public:
-    ResultatRepartition calculer(const std::vector<EtatTurbine>& etats,
-                                 float debitTotal,
-                                 const std::unordered_map<int, CommandeTurbine>& commandes) const;
+    ResultatRepartition calculer(const std::vector<EtatTurbine>& etats, float debitTotal,const std::unordered_map<int, CommandeTurbine>& commandes) const;
 };

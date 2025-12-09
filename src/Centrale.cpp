@@ -3,10 +3,12 @@
 Centrale::Centrale(int id,
                    Status statusInitial,
                    std::shared_ptr<Reservoir> reservoirAmont,
+                   std::shared_ptr<Capteur> capteurQturb,
                    std::unique_ptr<ModuleRepartitionDebit> moduleRepartition)
     : m_id(id),
       m_status(statusInitial),
       m_reservoirAmont(std::move(reservoirAmont)),
+      m_capteurQturb(std::move(capteurQturb)),
       m_moduleRepartition(std::move(moduleRepartition))
 {
 }
@@ -162,6 +164,11 @@ void Centrale::setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd)
     m_commandesTurbines[idTurbine] = cmd;
 }
 
+const CommandeTurbine& Centrale::getCommandeTurbine(int idTurbine)
+{
+    return m_commandesTurbines[idTurbine];
+}
+
 ResultatRepartition Centrale::repartirDebit(float debitTotal)
 {
     if (!m_moduleRepartition) {
@@ -207,10 +214,10 @@ void Centrale::mettreAJour() {
     }
 
     float debitTotal = 0.f;
-    for (const auto& t : m_turbines) {
-        if (!t) continue;
-        debitTotal += t->getDebit();
+    if (m_capteurQturb) {
+        debitTotal = m_capteurQturb->lire();
     }
+    else{std::cout << "Centrale " << m_id<< " : capteur Qturb non defini\n";}
 
     ResultatRepartition res = repartirDebit(debitTotal);
 
@@ -229,16 +236,3 @@ void Centrale::mettreAJour() {
 
     if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
 }
-
-/*
-void Centrale::mettreAJour(){
-    float hauteurChute = calculerHauteurChute();
-    for (const auto& t : m_turbines)
-    {
-        if (!t) continue;
-        t->mettreAJourDepuisCapteur();
-        t->setHauteurChute(hauteurChute);
-    }
-    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
-}
-*/
