@@ -18,3 +18,4 @@ std::unique_ptr<Centrale> CentraleFactory::creerCentraleStandard(std::shared_ptr
     centrale->ajouterTurbine(TurbineFactory::makeTurbine5(src));
     return centrale;
 }
+

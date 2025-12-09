@@ -262,3 +262,27 @@ ResultatRepartition Centrale::mettreAJour() {
     if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
     return res;
 }
+
+void Centrale::setDebitMinTurbine(int idTurbine, float newMin)
+{
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (t->getId() == idTurbine) {
+            t->setDebitMin(newMin);
+            return;
+        }
+    }
+    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMin)\n";
+}
+
+void Centrale::setDebitMaxTurbine(int idTurbine, float newMax)
+{
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (t->getId() == idTurbine) {
+            t->setDebitMax(newMax);
+            return;
+        }
+    }
+    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMax)\n";
+}
