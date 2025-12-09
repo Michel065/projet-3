@@ -160,18 +160,6 @@ Turbine* Centrale::getTurbine(int index)// uniquement utilise dans le cas ou on 
     return m_turbines[index].get();
 }
 
-void Centrale::mettreAJour(){
-    date.addSecs(7200);
-    this->getProductionInstantanee();
-    for (const auto& t : m_turbines)
-    {
-        if (!t) continue;
-        t->mettreAJourDepuisCapteur();
-		t->addDataToHistorique({ t->getId(), t->getDebit(), t->getDebitMin(), t->getDebitMax(), t->getHauteurChute(), t->getProductionInstantanee()});
-    }
-    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
-}
-
 void Centrale::UpdateScreen()
 {
     if (cpt == timeStep) {
@@ -380,8 +368,35 @@ ResultatRepartition Centrale::repartirDebit(float debitTotal)
     return res;
 }
 
+void Centrale::setDebitMinTurbine(int idTurbine, float newMin)
+{
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (t->getId() == idTurbine) {
+            t->setDebitMin(newMin);
+            return;
+        }
+    }
+    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMin)\n";
+}
+
+void Centrale::setDebitMaxTurbine(int idTurbine, float newMax)
+{
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (t->getId() == idTurbine) {
+            t->setDebitMax(newMax);
+            return;
+        }
+    }
+    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMax)\n";
+}
+
 ResultatRepartition Centrale::mettreAJour() {
     ResultatRepartition res;
+    
+    date.addSecs(7200);
+
     float hauteurChute = calculerHauteurChute();
 
     if (!m_moduleRepartition || !m_capteurQturb) {
@@ -389,6 +404,14 @@ ResultatRepartition Centrale::mettreAJour() {
             if (!t) continue;
             t->mettreAJourDepuisCapteur();
             t->setHauteurChute(hauteurChute);
+            t->addDataToHistorique({
+                t->getId(),
+                t->getDebit(),
+                t->getDebitMin(),
+                t->getDebitMax(),
+                t->getHauteurChute(),
+                t->getProductionInstantanee()
+            });
         }
         if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
 
@@ -420,6 +443,16 @@ ResultatRepartition Centrale::mettreAJour() {
         if (idx < res.debitsTurbines.size())
             t->setDebit(res.debitsTurbines[idx]);
         t->setHauteurChute(hauteurChute);
+
+        t->addDataToHistorique({
+            t->getId(),
+            t->getDebit(),
+            t->getDebitMin(),
+            t->getDebitMax(),
+            t->getHauteurChute(),
+            t->getProductionInstantanee()
+        });
+
         ++idx;
     }
 
@@ -429,28 +462,4 @@ ResultatRepartition Centrale::mettreAJour() {
 
     if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
     return res;
-}
-
-void Centrale::setDebitMinTurbine(int idTurbine, float newMin)
-{
-    for (auto& t : m_turbines) {
-        if (!t) continue;
-        if (t->getId() == idTurbine) {
-            t->setDebitMin(newMin);
-            return;
-        }
-    }
-    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMin)\n";
-}
-
-void Centrale::setDebitMaxTurbine(int idTurbine, float newMax)
-{
-    for (auto& t : m_turbines) {
-        if (!t) continue;
-        if (t->getId() == idTurbine) {
-            t->setDebitMax(newMax);
-            return;
-        }
-    }
-    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMax)\n";
 }
