@@ -1,7 +1,7 @@
 #include "factory/CentraleFactory.hpp"
 #include "RepartitionDebit.hpp"
 
-std::unique_ptr<Centrale> CentraleFactory::creerCentraleStandard(std::shared_ptr<SourceDonnees>& src)
+std::unique_ptr<Centrale> CentraleFactory::creerCentraleStandard(std::shared_ptr<SourceDonnees> &src)
 {
     auto capteurNivAmont = std::make_shared<Capteur>(src, TypeMesure::NivAmont);
     auto capteurQturb = std::make_shared<Capteur>(src, TypeMesure::Qturb);
@@ -19,3 +19,4 @@ std::unique_ptr<Centrale> CentraleFactory::creerCentraleStandard(std::shared_ptr
     centrale->SetDataSource(src);
     return centrale;
 }
+

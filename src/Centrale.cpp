@@ -402,31 +402,17 @@ void Centrale::setDebitMaxTurbine(int idTurbine, float newMax)
 
 ResultatRepartition Centrale::mettreAJour() {
     ResultatRepartition res;
-    
     date.addSecs(7200);
-
+    
     float hauteurChute = calculerHauteurChute();
-
     for (const auto& t : m_turbines) {
-        if (!t && t->getMode() == ModeTurbine::Automatique)
-            t->mettreAJourDepuisCapteur();
-    }
+        if (t->getStatus() == Status::Marche) {
 
-    float debitTotal = 0.f;
-    if (m_capteurQturb) {
-        debitTotal = m_capteurQturb->lire();
-    }
-    else{std::cout << "Centrale " << m_id<< " : capteur Qturb non defini\n";}
-
-    //res = repartirDebit(debitTotal);
-
-    std::size_t idx = 0;
-    for (auto& t : m_turbines) {
-        if (!t) continue;
-        if (idx < res.debitsTurbines.size())
-            t->setDebit(res.debitsTurbines[idx]);
-        if(t->getMode() == ModeTurbine::Automatique) 
             t->setHauteurChute(hauteurChute);
+            t->getProductionInstantanee();
+            if (t->getMode() == ModeTurbine::Automatique)
+                t->mettreAJourDepuisCapteur();
+        }
 
         t->addDataToHistorique({
             t->getId(),
@@ -435,16 +421,8 @@ ResultatRepartition Centrale::mettreAJour() {
             t->getDebitMax(),
             t->getHauteurChute(),
             t->getProductionInstantanee()
-        });
-
-        ++idx;
+            });
     }
-
-    if (!res.repartitionPossible && !res.message.empty()) {
-        std::cout << "Centrale " << m_id << " : " << res.message << '\n';
-    }
-
-    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
     return res;
 }
 

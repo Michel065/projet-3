@@ -15,6 +15,9 @@ TurbineWidget::TurbineWidget(Turbine* turbine, QWidget* parent)
     connect(m_switch, &ToggleSwitch::toggled, this, [this](bool on) {
         m_turbine->setMode(on ? ModeTurbine::Automatique
             : ModeTurbine::Manuel);
+        if (on) {
+            m_turbine->setStatus(Status::Marche);
+        }
         });
 
     // --- Champ numérique ---
@@ -81,6 +84,9 @@ TurbineWidget::TurbineWidget(Turbine* turbine, QWidget* parent)
             update();
         }
         });
+
+    connect(m_comboStatus, QOverload<int>::of(&QComboBox::currentIndexChanged),
+        this, &TurbineWidget::onStatusChanged);
 }
 
 
@@ -160,4 +166,17 @@ void TurbineWidget::paintEvent(QPaintEvent* event)
         EditQMax->move(inputX + 20, inputY + 105);
     }
     QWidget::paintEvent(event);
+}
+
+void TurbineWidget::onStatusChanged(int index)
+{
+    // Récupérer la valeur associée à l'élément sélectionné
+    Status s = static_cast<Status>(m_comboStatus->itemData(index).toInt());
+
+    // Appliquer le nouveau statut à la turbine
+    m_turbine->setStatus(s);
+    if (s == Status::Maintenance || s == Status::Arret ) {
+        m_turbine->setDebit(0);
+    }
+    update();
 }
