@@ -45,7 +45,9 @@ public:
     void clearToutesCommandes();
     void setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd);
     ResultatRepartition repartirDebit(float debitTotal);
-    
+    void setDebitMinTurbine(int idTurbine, float newMin);
+    void setDebitMaxTurbine(int idTurbine, float newMax);
+
 
 private:
     int m_id;

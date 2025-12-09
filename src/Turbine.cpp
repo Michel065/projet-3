@@ -38,10 +38,10 @@ Status Turbine::getStatus() const
     return m_status;
 }
 
-void Turbine::setDebit(float nouveauDebit)
+void Turbine::setDebit(float nouveauDebit,bool aff)
 {
-    if (nouveauDebit < m_debit_min) {std::cout << "Turbine " << m_id << " : erreur, debit inferieur au debit_min !" << std::endl;return;}
-    if (nouveauDebit > m_debit_max) {std::cout << "Turbine " << m_id << " : erreur, debit superieur au debit_max !" << std::endl;return;}
+    if (aff && nouveauDebit < m_debit_min) {std::cout << "Turbine " << m_id << " : erreur, debit inferieur au debit_min !" << std::endl;return;}
+    if (aff && nouveauDebit > m_debit_max) {std::cout << "Turbine " << m_id << " : erreur, debit superieur au debit_max !" << std::endl;return;}
     /*uniquement si nv debit valide*/
     m_debit = nouveauDebit;
     if (m_status != Status::Maintenance)
@@ -91,5 +91,5 @@ void Turbine::mettreAJourDepuisCapteur()
 {
     if (!m_capteurDebit) //on sait jamais on verifie
         return;
-    setDebit(m_capteurDebit->lire());
+    setDebit(m_capteurDebit->lire(),false);
 }

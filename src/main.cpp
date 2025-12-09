@@ -195,6 +195,10 @@ void execution_centrale_detail(int nbr_data = 10)
         centrale->setCommandeTurbine(3, cmd);
     }
 
+    {
+        centrale->setDebitMinTurbine(2, 30.f);
+        centrale->setDebitMaxTurbine(2, 120.f);
+    }
     // Exemple 2 : turbine 2 limitée à un débit imposé (par ex. 40 m3/s)
     /*{
         CommandeTurbine cmd;

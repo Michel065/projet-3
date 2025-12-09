@@ -17,7 +17,7 @@ public:
     float getDebitMax() const;
     Status getStatus() const;
 
-    void setDebit(float nouveauDebit);
+    void setDebit(float nouveauDebit,bool aff=true);
     void setDebitMin(float nouveauDebit);
     void setDebitMax(float nouveauDebit);
     void setStatus(Status nouveauStatus);
