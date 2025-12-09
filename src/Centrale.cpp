@@ -463,3 +463,36 @@ ResultatRepartition Centrale::mettreAJour() {
     if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
     return res;
 }
+
+/**
+ * Tuto rapide : comment imposer des choses à la centrale
+ *
+ * 1) Forcer l’état d’une turbine (ex : arrêter la turbine 3)
+ *
+ *      CommandeTurbine cmd;
+ *      cmd.forceStatus  = true;
+ *      cmd.statusImpose = Status::Arret;
+ *      centrale->setCommandeTurbine(3, cmd);
+ *
+ * 2) Forcer un débit sur une turbine (ex : imposer Q = 100 à la turbine 2)
+ *
+ *      CommandeTurbine cmd;
+ *      cmd.forceDebit  = true;
+ *      cmd.debitImpose = 100.f;
+ *      centrale->setCommandeTurbine(2, cmd);
+ *
+ * 3) Revenir en mode "auto" pour une turbine (plus de forçage)
+ *
+ *      centrale->clearCommandeTurbine(2);
+ *
+ * 4) Modifier les débits min / max d’une turbine (ex : turbine 2)
+ *
+ *      centrale->setDebitMinTurbine(2, 30.f);
+ *      centrale->setDebitMaxTurbine(2, 120.f);
+ *
+ * A chaque appel de centrale->mettreAJour(), la centrale :
+ *  - lit Qturb via le capteur central,
+ *  - calcule une nouvelle répartition en tenant compte des min/max et des commandes,
+ *  - applique les débits aux turbines,
+ *  - renvoie un ResultatRepartition (message, debitVanne, etc.) en cas de problème.
+ */
