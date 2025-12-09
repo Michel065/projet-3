@@ -13,5 +13,5 @@ class Centrale;
 class CentraleFactory
 {
 public:
-    static std::unique_ptr<Centrale> creerCentraleStandard(std::shared_ptr<SourceDonnees> src);
+    static std::unique_ptr<Centrale> creerCentraleStandard(std::shared_ptr<SourceDonnees>& src);
 };

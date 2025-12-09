@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/Images">
+        <file>resources/logo-hq-couleur-fb.jpg</file>
+    </qresource>
+</RCC>

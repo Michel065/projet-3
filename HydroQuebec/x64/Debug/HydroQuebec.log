@@ -1,0 +1,67 @@
+﻿   Qt/MSBuild: 3.4.1.0
+   Qt: 6.10.0
+  input.cpp
+  main.cpp
+  PowerGestionApp.cpp
+  Capteur.cpp
+  Centrale.cpp
+  CentraleFactory.cpp
+  StratTurbineFactory.cpp
+  TurbineFactory.cpp
+  ParcHydroelectrique.cpp
+  Reservoir.cpp
+  SourceDonnees.cpp
+  ProductionPolynomiale.cpp
+  Turbine.cpp
+C:\Users\Maxence\source\repos\projet-3\src\Centrale.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x185 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\Centrale.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x1851 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\Centrale.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x1ba7 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\PowerGestionApp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x61b et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  GraphUI.cpp
+C:\Users\Maxence\source\repos\projet-3\src\UI\GraphUI.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0xb1d et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\GraphUI.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0xc64 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\GraphUI.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0xc7a et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  PopUp.cpp
+C:\Users\Maxence\source\repos\projet-3\src\UI\PopUp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0xe4 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\PopUp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0xe7 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\PopUp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0xef et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\PopUp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x1c2 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\PopUp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x25e et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\PopUp.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x38e et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  ToggleSwitch.cpp
+  TurbineWidget.cpp
+C:\Users\Maxence\source\repos\projet-3\src\UI\TurbineWidget.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x224 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\TurbineWidget.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x56c et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\UI\TurbineWidget.cpp(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x95c et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+C:\Users\Maxence\source\repos\projet-3\src\SourceDonnees.cpp(132,12): warning C4267: 'return' : conversion de 'size_t' en 'int', perte possible de données
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'src/factory/CentraleFactory.cpp')
+  
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'src/Centrale.cpp')
+  
+C:\Users\Maxence\source\repos\projet-3\src\Centrale.cpp(44,60): warning C4267: 'return' : conversion de 'size_t' en 'int', perte possible de données
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'main.cpp')
+  
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'src/ParcHydroelectrique.cpp')
+  
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'PowerGestionApp.cpp')
+  
+C:\Users\Maxence\source\repos\projet-3\src\Centrale.cpp(163,10): warning C4834: abandon de la valeur de retour de la fonction avec l’attribut [[nodiscard]]
+C:\Users\Maxence\source\repos\projet-3\src\ParcHydroelectrique.cpp(13,28): warning C4267: 'return' : conversion de 'size_t' en 'int', perte possible de données
+  qrc_resources.cpp
+  moc_PowerGestionApp.cpp
+  moc_GraphUI.cpp
+  moc_TurbineWidget.cpp
+  moc_ToggleSwitch.cpp
+  moc_SimpleButton.cpp
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'HydroQuebec/x64/Debug/qt/moc/moc_SimpleButton.cpp')
+  
+C:\Users\Maxence\source\repos\projet-3\include\UI\SimpleButton.h(1,1): warning C4828: Le fichier contient un caractère qui débute à l'offset 0x565 et qui est non conforme dans le jeu de caractères source actuel (page de codes 65001).
+  (compiler le fichier source 'HydroQuebec/x64/Debug/qt/moc/moc_PowerGestionApp.cpp')
+  
+  HydroQuebec.vcxproj -> C:\Users\Maxence\source\repos\projet-3\x64\Debug\HydroQuebec.exe
