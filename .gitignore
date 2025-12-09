@@ -1,2 +1,4 @@
 /build/
 *.exe
+/data/historique_centrale.csv
+/data/historique_turbines.csv

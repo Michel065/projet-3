@@ -9,7 +9,7 @@ std::unique_ptr<Centrale> CentraleFactory::creerCentraleStandard(std::shared_ptr
 
     auto moduleRepartition_centrale_standard = std::make_unique<ModuleRepartitionDebit>();
     
-    auto centrale = std::make_unique<Centrale>(1,Status::Marche,resAmont,capteurQturb,std::move(moduleRepartition_centrale_standard));
+    auto centrale = std::make_unique<Centrale>(1,Status::Marche,resAmont,capteurQturb,moduleRepartition_centrale_standard);
 
     centrale->ajouterTurbine(TurbineFactory::makeTurbine1(src));
     centrale->ajouterTurbine(TurbineFactory::makeTurbine2(src));
