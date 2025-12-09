@@ -13,13 +13,19 @@
 #include "UI/TurbineWidget.h"
 #include "UI/SimpleButton.h"
 #include "qdatetime.h"
+#include "SourceDonnees.hpp"
+
+//pour la repartion
+#include "RepartitionDebit.hpp"
 
 class Centrale: public IProducteur
 {
 public:
     Centrale(int id,
              Status statusInitial,
-             std::shared_ptr<Reservoir> reservoirAmont);
+             std::shared_ptr<Reservoir> reservoirAmont,
+             std::shared_ptr<Capteur> capteurQturb,
+             std::unique_ptr<ModuleRepartitionDebit>& moduleRepartition);
 
     int    getId()     const;
     Status getStatus() const;
@@ -39,7 +45,7 @@ public:
     void print_Production_centrale() const;
     void print_Production_centrale_detail() const;
 
-    void mettreAJour();
+    ResultatRepartition mettreAJour();
 
     void UpdateScreen();
 
@@ -50,6 +56,16 @@ public:
     void SetParentWidget(QWidget* parent);
 
 	void SetupPositionTurbineWidgets(int startX, int startY, int widthScreen);
+
+    
+    //test repartition
+    const CommandeTurbine& getCommandeTurbine(int idTurbine)const;
+    void clearCommandeTurbine(int idTurbine);
+    void clearToutesCommandes();
+    void setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd);
+    ResultatRepartition repartirDebit(float debitTotal);
+    void setDebitMinTurbine(int idTurbine, float newMin);
+    void setDebitMaxTurbine(int idTurbine, float newMax);
 
 private:
     int m_id;
@@ -68,5 +84,11 @@ private:
     GraphWidget* graphWidget = nullptr;
     QDateTime date;
 	std::vector<SimpleBouton*> m_buttons;
+
+    //test repartition
+    std::shared_ptr<Capteur> m_capteurQturb;
+    std::unique_ptr<ModuleRepartitionDebit> m_moduleRepartition;
+    std::unordered_map<int, CommandeTurbine> m_commandesTurbines;
+    std::vector<EtatTurbine> construireEtatsTurbines() const;
 
 };

@@ -1,5 +1,4 @@
 #include "Centrale.hpp"
-#include "SourceDonnees.hpp" // Ajout de l'inclusion manquante
 
 
 
@@ -8,11 +7,13 @@ Centrale::Centrale(int id,
                    std::shared_ptr<Reservoir> reservoirAmont)
     : m_id(id),
       m_status(statusInitial),
-      m_reservoirAmont(std::move(reservoirAmont))
+      m_reservoirAmont(std::move(reservoirAmont)),
+      m_capteurQturb(std::move(capteurQturb)),
+      m_moduleRepartition(std::move(moduleRepartition))
 {
     m_series = new QPieSeries();
     m_chart = new QChart();
-    // Créer le chart
+    // Crï¿½er le chart
     m_chart->addSeries(m_series);
     m_chart->setTitle("Repartition de la puissance produite par turbine");
     m_chart->legend()->setVisible(true);
@@ -227,7 +228,7 @@ void Centrale::drawRepartitionPuissance(QPainter& p)
 {
 
     m_series->clear();
-    // Ajouter les turbines ou catégories
+    // Ajouter les turbines ou catï¿½gories
     for (const auto& t : m_turbines) {
         m_series->append(QString("Turbine %1").arg(t->getId()), t->getProductionInstantanee());
     }
@@ -249,7 +250,7 @@ void Centrale::drawRepartitionPuissance(QPainter& p)
             .arg(slice->label())
             .arg(int(slice->percentage() * 100)));
 
-        if (i == 1) {  // par exemple, mettre en avant le deuxième slice
+        if (i == 1) {  // par exemple, mettre en avant le deuxiï¿½me slice
             slice->setExploded(true);
             slice->setLabelArmLengthFactor(0.3);
             slice->setLabelVisible(true);
@@ -301,4 +302,155 @@ void Centrale::SetupPositionTurbineWidgets(int startX, int startY, int widthScre
         startX += spacingX;
 
 	}
+}
+
+
+//test repartition
+std::vector<EtatTurbine> Centrale::construireEtatsTurbines() const
+{
+    std::vector<EtatTurbine> etats;
+    etats.reserve(m_turbines.size());
+
+    for (const auto& t : m_turbines) {
+        if (!t) continue;
+        EtatTurbine e;
+        e.id           = t->getId();
+        e.status       = t->getStatus();
+        e.debitMin     = t->getDebitMin();
+        e.debitMax     = t->getDebitMax();
+        e.debitActuel  = t->getDebit();
+        etats.push_back(e);
+    }
+
+    return etats;
+}
+
+void Centrale::setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd)
+{
+    // Si aucune contrainte n'est active, on supp
+    if (!cmd.forceDebit && !cmd.forceStatus) {
+        m_commandesTurbines.erase(idTurbine);
+        return;
+    }
+
+    m_commandesTurbines[idTurbine] = cmd;
+}
+
+const CommandeTurbine& Centrale::getCommandeTurbine(int idTurbine) const
+{
+    static const CommandeTurbine cmdNeutre{};
+    auto it = m_commandesTurbines.find(idTurbine);
+    if (it != m_commandesTurbines.end())
+        return it->second;
+    return cmdNeutre;
+}
+
+void Centrale::clearCommandeTurbine(int idTurbine)
+{
+    m_commandesTurbines.erase(idTurbine);
+}
+
+void Centrale::clearToutesCommandes()
+{
+    m_commandesTurbines.clear();
+}
+
+ResultatRepartition Centrale::repartirDebit(float debitTotal)
+{
+    if (!m_moduleRepartition) {
+        ResultatRepartition res;
+        res.repartitionPossible = false;
+        res.debitVanne = debitTotal;
+        res.message = "Aucun module de repartition de debit n'est defini.";
+        return res;
+    }
+
+    auto etats = construireEtatsTurbines();
+    auto res = m_moduleRepartition->calculer(etats, debitTotal, m_commandesTurbines);
+
+    std::size_t idx = 0;
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (idx < res.debitsTurbines.size()) {
+            t->setDebit(res.debitsTurbines[idx]);
+        }
+        ++idx;
+    }
+
+    return res;
+}
+
+ResultatRepartition Centrale::mettreAJour() {
+    ResultatRepartition res;
+    float hauteurChute = calculerHauteurChute();
+
+    if (!m_moduleRepartition || !m_capteurQturb) {
+        for (const auto& t : m_turbines) {
+            if (!t) continue;
+            t->mettreAJourDepuisCapteur();
+            t->setHauteurChute(hauteurChute);
+        }
+        if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
+
+        if (!m_moduleRepartition)
+            res.message = "Aucun module de repartition defini, mise a jour simple.";
+        else if (!m_capteurQturb)
+            res.message = "Capteur Qturb non defini, mise a jour simple.";
+
+        res.repartitionPossible = false;
+        return res;
+    }
+
+    for (const auto& t : m_turbines) {
+        if (!t) continue;
+        t->mettreAJourDepuisCapteur();
+    }
+
+    float debitTotal = 0.f;
+    if (m_capteurQturb) {
+        debitTotal = m_capteurQturb->lire();
+    }
+    else{std::cout << "Centrale " << m_id<< " : capteur Qturb non defini\n";}
+
+    res = repartirDebit(debitTotal);
+
+    std::size_t idx = 0;
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (idx < res.debitsTurbines.size())
+            t->setDebit(res.debitsTurbines[idx]);
+        t->setHauteurChute(hauteurChute);
+        ++idx;
+    }
+
+    if (!res.repartitionPossible && !res.message.empty()) {
+        std::cout << "Centrale " << m_id << " : " << res.message << '\n';
+    }
+
+    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
+    return res;
+}
+
+void Centrale::setDebitMinTurbine(int idTurbine, float newMin)
+{
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (t->getId() == idTurbine) {
+            t->setDebitMin(newMin);
+            return;
+        }
+    }
+    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMin)\n";
+}
+
+void Centrale::setDebitMaxTurbine(int idTurbine, float newMax)
+{
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (t->getId() == idTurbine) {
+            t->setDebitMax(newMax);
+            return;
+        }
+    }
+    std::cout << "Centrale " << m_id << " : turbine " << idTurbine << " introuvable (setDebitMax)\n";
 }
