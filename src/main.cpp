@@ -1,6 +1,7 @@
 #include <iostream>
 #include "factory/CentraleFactory.hpp"
 #include "ParcHydroelectrique.hpp"
+#include "RepartitionDebit.hpp"
 #include <vector>
 #include <cmath>
 #include <fstream>
@@ -139,8 +140,7 @@ struct HistoriqueCentrale
     float PrealTot;
 };
 
-void create_graph_from_historique(const std::vector<HistoriqueTurbine>& histoTurbines,
-                                  const std::vector<HistoriqueCentrale>& histoCentrale)
+void create_graph_from_historique(const std::vector<HistoriqueTurbine>& histoTurbines,const std::vector<HistoriqueCentrale>& histoCentrale)
 {
     
     /*
@@ -185,6 +185,26 @@ void execution_centrale_detail(int nbr_data = 10)
 {
     auto src      = std::make_shared<SourceDonnees>();
     auto centrale = CentraleFactory::creerCentraleStandard(src);
+
+    // ================== SCENARIO / RESTRICTIONS ==================
+    // Exemple 1 : turbine 3 en panne (à l'arrêt)
+    {
+        CommandeTurbine cmd;
+        cmd.forceStatus  = true;
+        cmd.statusImpose = Status::Arret;
+        centrale->setCommandeTurbine(3, cmd);
+    }
+
+    // Exemple 2 : turbine 2 limitée à un débit imposé (par ex. 40 m3/s)
+    /*{
+        CommandeTurbine cmd;
+        cmd.forceDebit   = true;
+        cmd.debitImpose  = 40.f;   // à adapter à tes données
+        // si tu veux aussi forcer le status en marche :
+        // cmd.forceStatus  = true;
+        // cmd.statusImpose = Status::Marche;
+        centrale->setCommandeTurbine(2, cmd);
+    }*/
 
     std::vector<HistoriqueTurbine>  histoTurbines;
     std::vector<HistoriqueCentrale> histoCentrale;
@@ -240,6 +260,6 @@ void execution_centrale_detail(int nbr_data = 10)
 
 int main()
 {
-    execution_centrale_detail(-1);
+    execution_centrale_detail(50);
     return 0;
 }

@@ -93,3 +93,9 @@ void Turbine::mettreAJourDepuisCapteur()
         return;
     setDebit(m_capteurDebit->lire());
 }
+
+/*
+void Centrale::setdebitturbine(int id_turbine,flaot new_debit);
+void Centrale::setstatusturbine(int id_turbine,Status new_status);
+void Centrale::calcul_repartion_debit_par_turbines();
+*/

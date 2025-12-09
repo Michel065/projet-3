@@ -2,10 +2,12 @@
 
 Centrale::Centrale(int id,
                    Status statusInitial,
-                   std::shared_ptr<Reservoir> reservoirAmont)
+                   std::shared_ptr<Reservoir> reservoirAmont,
+                   std::unique_ptr<ModuleRepartitionDebit> moduleRepartition)
     : m_id(id),
       m_status(statusInitial),
-      m_reservoirAmont(std::move(reservoirAmont))
+      m_reservoirAmont(std::move(reservoirAmont)),
+      m_moduleRepartition(std::move(moduleRepartition))
 {
 }
 
@@ -75,13 +77,8 @@ std::vector<std::pair<int, float>> Centrale::getProductionInstantaneeDetail() co
         }
         return details;
     }
-
-    float hauteurChute = calculerHauteurChute();
-
     for (const auto& t : m_turbines) {
         if (!t) continue;
-
-        t->setHauteurChute(hauteurChute);
         float p = t->getProductionInstantanee();
         details.emplace_back(t->getId(), p);
     }
@@ -140,11 +137,108 @@ Turbine* Centrale::getTurbine(int index)// uniquement utilise dans le cas ou on 
     return m_turbines[index].get();
 }
 
+//test repartition
+std::vector<EtatTurbine> Centrale::construireEtatsTurbines() const
+{
+    std::vector<EtatTurbine> etats;
+    etats.reserve(m_turbines.size());
+
+    for (const auto& t : m_turbines) {
+        if (!t) continue;
+        EtatTurbine e;
+        e.id           = t->getId();
+        e.status       = t->getStatus();
+        e.debitMin     = t->getDebitMin();
+        e.debitMax     = t->getDebitMax();
+        e.debitActuel  = t->getDebit();
+        etats.push_back(e);
+    }
+
+    return etats;
+}
+
+void Centrale::setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd)
+{
+    m_commandesTurbines[idTurbine] = cmd;
+}
+
+ResultatRepartition Centrale::repartirDebit(float debitTotal)
+{
+    if (!m_moduleRepartition) {
+        ResultatRepartition res;
+        res.repartitionPossible = false;
+        res.debitVanne = debitTotal;
+        res.message = "Aucun module de repartition de debit n'est defini.";
+        return res;
+    }
+
+    auto etats = construireEtatsTurbines();
+    auto res = m_moduleRepartition->calculer(etats, debitTotal, m_commandesTurbines);
+
+    std::size_t idx = 0;
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (idx < res.debitsTurbines.size()) {
+            t->setDebit(res.debitsTurbines[idx]);
+        }
+        ++idx;
+    }
+
+    return res;
+}
+
+
+void Centrale::mettreAJour() {
+    float hauteurChute = calculerHauteurChute();
+
+    if (!m_moduleRepartition) { // on sait jamais
+        for (const auto& t : m_turbines) {
+            if (!t) continue;
+            t->mettreAJourDepuisCapteur();
+            t->setHauteurChute(hauteurChute);
+        }
+        if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
+        return;
+    }
+
+    for (const auto& t : m_turbines) {
+        if (!t) continue;
+        t->mettreAJourDepuisCapteur();
+    }
+
+    float debitTotal = 0.f;
+    for (const auto& t : m_turbines) {
+        if (!t) continue;
+        debitTotal += t->getDebit();
+    }
+
+    ResultatRepartition res = repartirDebit(debitTotal);
+
+    std::size_t idx = 0;
+    for (auto& t : m_turbines) {
+        if (!t) continue;
+        if (idx < res.debitsTurbines.size())
+            t->setDebit(res.debitsTurbines[idx]);
+        t->setHauteurChute(hauteurChute);
+        ++idx;
+    }
+
+    if (!res.repartitionPossible && !res.message.empty()) {
+        std::cout << "Centrale " << m_id << " : " << res.message << '\n';
+    }
+
+    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
+}
+
+/*
 void Centrale::mettreAJour(){
+    float hauteurChute = calculerHauteurChute();
     for (const auto& t : m_turbines)
     {
         if (!t) continue;
         t->mettreAJourDepuisCapteur();
+        t->setHauteurChute(hauteurChute);
     }
     if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
 }
+*/

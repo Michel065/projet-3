@@ -8,12 +8,17 @@
 #include <numeric> 
 #include "composite/Iproduction.hpp"
 
+//nouveau test
+#include "RepartitionDebit.hpp"
+#include <unordered_map>
+
 class Centrale: public IProducteur
 {
 public:
     Centrale(int id,
              Status statusInitial,
-             std::shared_ptr<Reservoir> reservoirAmont);
+             std::shared_ptr<Reservoir> reservoirAmont,
+             std::unique_ptr<ModuleRepartitionDebit> moduleRepartition);
 
     int    getId()     const;
     Status getStatus() const;
@@ -33,6 +38,10 @@ public:
 
     void mettreAJour();
     
+    //test repartition
+    void setCommandeTurbine(int idTurbine, const CommandeTurbine& cmd);
+    ResultatRepartition repartirDebit(float debitTotal);
+    
 
 private:
     int m_id;
@@ -41,4 +50,9 @@ private:
     std::shared_ptr<Reservoir> m_reservoirAmont;
 
     std::vector<std::unique_ptr<Turbine>> m_turbines;
+
+    std::unique_ptr<ModuleRepartitionDebit> m_moduleRepartition;
+    std::unordered_map<int, CommandeTurbine> m_commandesTurbines;
+
+    std::vector<EtatTurbine> construireEtatsTurbines() const;
 };
