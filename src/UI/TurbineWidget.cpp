@@ -23,13 +23,6 @@ TurbineWidget::TurbineWidget(Turbine* turbine, QWidget* parent)
     m_editValeur->setFixedWidth(120);
     m_editValeur->setAlignment(Qt::AlignCenter);
 
-    m_editValeur->setValidator(new QDoubleValidator(
-        m_turbine->getDebitMin(),
-        m_turbine->getDebitMax(),
-        2,
-        this
-    ));
-
     EditQMin = new QLineEdit(this);
     EditQMin->setPlaceholderText(QString::number(m_turbine->getDebitMin()));
     EditQMin->setFixedWidth(120);
@@ -94,6 +87,14 @@ TurbineWidget::TurbineWidget(Turbine* turbine, QWidget* parent)
 void TurbineWidget::paintEvent(QPaintEvent* event)
 {
     //On active ou désactiver les controles manuels
+
+    m_editValeur->setValidator(new QDoubleValidator(
+        m_turbine->getDebitMin(),
+        m_turbine->getDebitMax(),
+        2,
+        this
+    ));
+
     m_comboStatus->setVisible(!m_switch->isOn());
     m_editValeur->setVisible(!m_switch->isOn());
     EditQMax->setVisible(!m_switch->isOn());
