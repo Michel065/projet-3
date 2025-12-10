@@ -4,7 +4,9 @@
 
 Centrale::Centrale(int id,
                    Status statusInitial,
-                   std::shared_ptr<Reservoir> reservoirAmont)
+                   std::shared_ptr<Reservoir> reservoirAmont,
+                    std::shared_ptr<Capteur> capteurQturb,
+                    std::unique_ptr<ModuleRepartitionDebit>& moduleRepartition)
     : m_id(id),
       m_status(statusInitial),
       m_reservoirAmont(std::move(reservoirAmont)),
@@ -16,6 +18,12 @@ Centrale::Centrale(int id,
     // Cr�er le chart
     m_chart->addSeries(m_series);
     m_chart->setTitle("Repartition de la puissance produite par turbine");
+    QFont titleFont;
+    titleFont.setFamily("Arial");     // ou ce que tu veux
+    titleFont.setPointSize(14);       // taille du titre
+    titleFont.setBold(true);          // en gras
+
+    m_chart->setTitleFont(titleFont);
     m_chart->legend()->setVisible(true);
     m_chart->legend()->setAlignment(Qt::AlignRight);
 
@@ -209,7 +217,7 @@ void Centrale::draw(QPainter& p, int height, int width)
     p.setPen(Qt::black);
 
     QRect dateRect(0, 0, width - 10, 50); // marge de 10 px
-    p.drawText(dateRect, Qt::AlignRight | Qt::AlignVCenter, date.toString("dd MMMM yyyy \n hh::mm"));
+    p.drawText(dateRect, Qt::AlignRight | Qt::AlignVCenter, date.toString("dd MMMM yyyy \n hh:mm"));
 }
 
 void Centrale::drawRepartitionPuissance(QPainter& p)
@@ -394,55 +402,17 @@ void Centrale::setDebitMaxTurbine(int idTurbine, float newMax)
 
 ResultatRepartition Centrale::mettreAJour() {
     ResultatRepartition res;
-    
     date.addSecs(7200);
-
+    
     float hauteurChute = calculerHauteurChute();
-
-    if (!m_moduleRepartition || !m_capteurQturb) {
-        for (const auto& t : m_turbines) {
-            if (!t) continue;
-            t->mettreAJourDepuisCapteur();
-            t->setHauteurChute(hauteurChute);
-            t->addDataToHistorique({
-                t->getId(),
-                t->getDebit(),
-                t->getDebitMin(),
-                t->getDebitMax(),
-                t->getHauteurChute(),
-                t->getProductionInstantanee()
-            });
-        }
-        if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
-
-        if (!m_moduleRepartition)
-            res.message = "Aucun module de repartition defini, mise a jour simple.";
-        else if (!m_capteurQturb)
-            res.message = "Capteur Qturb non defini, mise a jour simple.";
-
-        res.repartitionPossible = false;
-        return res;
-    }
-
     for (const auto& t : m_turbines) {
-        if (!t) continue;
-        t->mettreAJourDepuisCapteur();
-    }
+        if (t->getStatus() == Status::Marche) {
 
-    float debitTotal = 0.f;
-    if (m_capteurQturb) {
-        debitTotal = m_capteurQturb->lire();
-    }
-    else{std::cout << "Centrale " << m_id<< " : capteur Qturb non defini\n";}
-
-    res = repartirDebit(debitTotal);
-
-    std::size_t idx = 0;
-    for (auto& t : m_turbines) {
-        if (!t) continue;
-        if (idx < res.debitsTurbines.size())
-            t->setDebit(res.debitsTurbines[idx]);
-        t->setHauteurChute(hauteurChute);
+            t->setHauteurChute(hauteurChute);
+            t->getProductionInstantanee();
+            if (t->getMode() == ModeTurbine::Automatique)
+                t->mettreAJourDepuisCapteur();
+        }
 
         t->addDataToHistorique({
             t->getId(),
@@ -451,48 +421,10 @@ ResultatRepartition Centrale::mettreAJour() {
             t->getDebitMax(),
             t->getHauteurChute(),
             t->getProductionInstantanee()
-        });
-
-        ++idx;
+            });
     }
 
-    if (!res.repartitionPossible && !res.message.empty()) {
-        std::cout << "Centrale " << m_id << " : " << res.message << '\n';
-    }
-
-    if (m_reservoirAmont) m_reservoirAmont->mettreAJour();
+    /* version sans utiliser repartition pour eviter des bugs imprevue pour le rendu*/
     return res;
 }
 
-/**
- * Tuto rapide : comment imposer des choses à la centrale
- *
- * 1) Forcer l’état d’une turbine (ex : arrêter la turbine 3)
- *
- *      CommandeTurbine cmd;
- *      cmd.forceStatus  = true;
- *      cmd.statusImpose = Status::Arret;
- *      centrale->setCommandeTurbine(3, cmd);
- *
- * 2) Forcer un débit sur une turbine (ex : imposer Q = 100 à la turbine 2)
- *
- *      CommandeTurbine cmd;
- *      cmd.forceDebit  = true;
- *      cmd.debitImpose = 100.f;
- *      centrale->setCommandeTurbine(2, cmd);
- *
- * 3) Revenir en mode "auto" pour une turbine (plus de forçage)
- *
- *      centrale->clearCommandeTurbine(2);
- *
- * 4) Modifier les débits min / max d’une turbine (ex : turbine 2)
- *
- *      centrale->setDebitMinTurbine(2, 30.f);
- *      centrale->setDebitMaxTurbine(2, 120.f);
- *
- * A chaque appel de centrale->mettreAJour(), la centrale :
- *  - lit Qturb via le capteur central,
- *  - calcule une nouvelle répartition en tenant compte des min/max et des commandes,
- *  - applique les débits aux turbines,
- *  - renvoie un ResultatRepartition (message, debitVanne, etc.) en cas de problème.
- */

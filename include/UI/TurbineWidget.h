@@ -20,8 +20,10 @@ protected:
     void paintEvent(QPaintEvent* event) override;
 
 private:
+    void onStatusChanged(int index);
+
     Turbine* m_turbine;
     ToggleSwitch* m_switch;
-    QLineEdit* m_editValeur;
+    QLineEdit* m_editValeur, *EditQMin, *EditQMax;
     QComboBox* m_comboStatus;
 };
